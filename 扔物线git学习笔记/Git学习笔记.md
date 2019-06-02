@@ -115,6 +115,9 @@ DVCS
 
 	push只是上传当前branch的指向，，并不会把本地的HEAD指向一起上传到远程仓库，远程仓库的HEAD永远指向它的默认分支
 
+合并两个独立启动仓库的历史
+	git pull origin master --allow-unrelated-histories
+
 # merge：合并commits #
 	pull的内部操作实际就是把远程仓库取到本地后(使用的是fetch)，再用一次merge来把远端仓库的commits合并到本地。
 	
