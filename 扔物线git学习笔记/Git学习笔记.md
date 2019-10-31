@@ -108,20 +108,29 @@ DVCS
 
 # push的本质 #
 	实质上，push做的事就是将当前branch的位置(即它指向那个commit)上传到远端仓库，并把它路径上的commits一起上传
+
 	git checkout xxx切换分支
+
 	git push origin xxx  我要push到origin这个仓库的xxx分支
+
+	git push -u origin branchname 把某分支推送到远程仓库上，'-u'不仅仅只是将分支推送到远程仓库，还让本地分支与远程分支之间合并 
 	
 	git 2.0以及之后版本，git push只能上传那些之前从远端clone或者pull下来的分支，若需要push本地的分支，需要手动指定目标仓库和目标分支
 
-	push只是上传当前branch的指向，，并不会把本地的HEAD指向一起上传到远程仓库，远程仓库的HEAD永远指向它的默认分支
+	push只是上传当前branch的指向，，并不会把本地的HEAD指向一起上传到远程仓库，远程仓库的##HEAD永远指向它的默认分支
 
-合并两个独立启动仓库的历史
-	git pull origin master --allow-unrelated-histories
+	git push origin HEAD --force 推送本地版本到远程库，强制推送，回退版本之后的推送
+
+# 合并两个独立启动仓库的历史
+	git pull origin master --allow-unrelated-histories //解决  拒绝合并无关历史
+
+## 将本地仓库与git远程仓库连接起来
+	git remote add origin git@github.com:Github账户名 
 
 # merge：合并commits #
 	pull的内部操作实际就是把远程仓库取到本地后(使用的是fetch)，再用一次merge来把远端仓库的commits合并到本地。
 	
-merge含义和用法
+##merge含义和用法
 	指定一个commit，把它合并到当前commit。
 	实际：
 		从目标commit和当前commit(即HEA指向的commit)分叉的位置起，把目标commit的路径上的所有commit的内容一并应用到当前commit，然后自动生成一个新的commit。(看图)
@@ -144,7 +153,7 @@ merge含义和用法
 		C、HEAD落后于目标commit
 			git会把HEAD(以及它指向的branch，如果有的话)移动到目标commit  术语fast-forward(快速前移)
 
-# Feature Branching：最流行的工作流 #
+## Feature Branching：最流行的工作流 #
 	总结(此工作流的工作模型)：
 		1、任何新的功能(Feature)和bug修复全都新建一个branch来写
 		2、branch写完后，合并到master，然后删掉这个branch
@@ -212,10 +221,10 @@ merge含义和用法
 		工作区类似 AndroidArt 这个代表本地仓库的目录就是工作区
 		版本库包含暂存区、HEAD指针、默认创建的master分支  .git文件夹就是版本库，当你git add时就是将数据放到暂存区,而git commit就是将暂存区的内容全部提交到当前分支
 
-# 不喜欢merge的分叉，用rebase吧 #
+## 不喜欢merge的分叉，用rebase吧 #
 	merge之后commit历史会出现分叉，这些分叉再会和的结构会让人觉得混乱而且难以管理，如果不希望commit历史出现分叉，可以用rebase来代替merge
 
-rebase
+## rebase
 	在新位置重新提交
 
 	git checkout dev 
@@ -225,12 +234,12 @@ rebase
 	git checkout master
 	git merge dev  把HEAD移到最新的commit
 
-刚刚提交的代码，发现写错了怎么办？
+## 刚刚提交的代码，发现写错了怎么办？
 	在本地修改再提交是一种方法，还可以这样用
 	本地修改后 git add <File>
 	git commit --amend(修正)  将工作区与暂存区的里的内容合并后创建一个新的commit，用这个新的commit将老的commit替换掉
 
-写错的不是最新的提交，而是倒数第二个
+## 写错的不是最新的提交，而是倒数第二个
 	git commit --amend 修复的是最新的commit的错误，但是如果是倒数第二个commit错误了怎么办
 
 	rebase -i(interactive简写) 交互式rebase
@@ -247,10 +256,10 @@ rebase
 		继续rebase过程
 			git rebase --continue
 
-丢弃刚才的提交
+## 丢弃刚才的提交
 	git reset --hard HEAD^跟上边一样  还有个git reset --hard HEAD~1...  撤销的是版本库的数据
 
-想丢弃的并不是最新的提交
+## 想丢弃的并不是最新的提交
 	场景：一个commit，你刚写完的时候并不觉得有什么问题，几个提交之后，突然发现有问题需要丢弃刚才的提交
 	使用交互式rebase撤销提交
 		除了修改一些旧的commits，还能用于撤销提交
@@ -258,7 +267,7 @@ rebase
 			git rebase -i HEAED^^
 			然后使用方向键选择要删除的行 ，使用delete删除  双击大写z完成
 
-代码已经push上去发现写错了
+## 代码已经push上去发现写错了
 	1、出错的代码在你的branch上
 		你在push之后发现错误commit，你可以使用rebase -i直接修改出错的commit，但是当你push时会报错，因为中央仓库含有你没有的commits。这次并不是因为同事的原因导致冲突，而是因为你自己修改了commit导致的，所以这时候就希望本地能够强制覆盖远程仓库，使用命令：
 			git push origin branch -f(force的缩写)  忽略冲突，强制push(这个操作的先决条件是你能够掌控所有的未知情况)
@@ -267,7 +276,7 @@ rebase
 		增加一个新的提交，把之前提交的内容给抹掉。
 			git revert HEAD^ 增加一个新的commit与原来的commit的操作完全相反(我的理解，就是撤销上一个commit的操作，然后自动生成一个新操作)，然后再push上去，这种操作只是将原来的commit的行为给翻转了，而且还在操作历史中
 
-reset的本质--不只可以撤销提交
+## reset的本质--不只可以撤销提交
 	最新的commit写错时，可以使用reset --hard 来吧这个commit给撤销，其实本质并不是撤销，而是将HEAD指针带着branch移动到当前commit的父commit上，从而起到撤销的效果
 
 	so，reset --hard不仅可以撤销提交，还可以把HEAD和branch移动到任何地方。
@@ -279,7 +288,7 @@ reset的本质--不只可以撤销提交
 	reset --soft 保留工作目录和暂存区的内容，并把重置HEAD带来的新的差异放进暂存区
 	reset 不加参数：保留工作目录，并清空暂存区
 
-checkout的本质
+## checkout的本质
 	git checkout branch名  实质就是将HEAD指向指定的branch，然后签出这个branch所对应的commit的工作目录
 	
 	git checkout --<file>  撤销工作区的内容  另一层意思是使用版本库的内容替换工作区的版本
@@ -289,7 +298,7 @@ checkout的本质
 	checkout与reset不同的地方在于  reset是HEAD和branch一起移动，而checkout只是将HEAD移动到其它地方，这时候HEAD并不会带着branch一起移动
 	git checkout --detach 将HEAD与branch脱离
 
-紧急情况
+## 紧急情况
 	场景：你正在一个branch开发，紧急情况需要处理  
 		git stash 临时存放工作目录的改动 把工作区暂时隐藏  
 		然后切换master分支，处理问题之后切换回刚才隐藏工作区的分支，使用：
@@ -298,7 +307,7 @@ checkout的本质
 		git stash list 查看stash列表
 		git stash apply ... 回复stash 但不删除stash的内容 使用git stash drop删除
 
-branch删除了才想起来还有用		
+## branch删除了才想起来还有用		
 	使用git reflog 可以查看HEAD的移动历史 找到删除branch的那条操作的commitid  然后使用git checkout  commitid 删除的branch就回来了
 
 	git reflog branch 查看指定branch的HEAD移动历史
