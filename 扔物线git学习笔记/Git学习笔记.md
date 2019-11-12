@@ -125,7 +125,7 @@ DVCS
 	git pull origin master --allow-unrelated-histories //解决  拒绝合并无关历史
 
 ## 将本地仓库与git远程仓库连接起来
-	git remote add origin git@github.com:Github账户名 
+	git remote add origin git@github.com:Github账户名/远程仓库名 
 
 # merge：合并commits #
 	pull的内部操作实际就是把远程仓库取到本地后(使用的是fetch)，再用一次merge来把远端仓库的commits合并到本地。
@@ -312,6 +312,14 @@ DVCS
 
 	git reflog branch 查看指定branch的HEAD移动历史
 
+## fork别人的项目改变之后提交
+	1. 先fork别人的项目
+	2. 在我们fork出来的自己的页面中找到地址，使用git clone克隆一个地址 -- git clone '自己fork界面的htts地址'
+	3. 添加与原始库的关联，并命名为upsteam  -- git remote add upstream '原来的项目地址'
+	4. 抓取原始库最新的(会自动合并)  -- git fetch upstream  
+	5. 本地修改文件提交并push 
+	6. 以github为例，在自己的主页提交pull request告诉原开发者新加提交，等待原开发者合并
+		  
 		
 	
 
